@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="js/app.js"></script>
     <style>
       #map {
         width: 500px;
@@ -13,6 +12,14 @@
     <title>Neighborhood Map</title>
 </head>
 <body>
+    <div id ="searchbar">
+        <h3>Searchbar</h3>
+    </div>
+    <div id="list"> <h3>Places</h3>
+        <ul data-bind="foreach: placelist">
+            <li data-bind="text: name"></li>
+        </ul>
+    </div>
     <div id="map"></div>
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAVpbWi3hTnh_EPdkYE1GLbOYVIiYeWdWY    &signed_in=true&callback=initMap"
