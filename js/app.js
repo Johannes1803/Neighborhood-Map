@@ -1,15 +1,15 @@
 // array of locations
 var locations = [
     {
-        name:"hain",
+        name:"Markusstrasse",
         position: {lat: 49.88521, lng: 10.89405}
     },
     {
-        name:"markusplatz",
+        name:"Markusplatz",
         position: {lat: 49.89565, lng: 10.88444}
     },
     {
-        name:"sandstrasse",
+        name:"Sandstrasse",
         position: {lat: 49.89168, lng:  10.88491}
     }
     ];
@@ -63,18 +63,15 @@ var ViewModel = function() {
         var filter = self.query().toLowerCase();
         // no search query
         if (!filter) {
-            //console.log("1")
-            //console.log(self.placelist());
-            //console.log(self.showlist);
+;
             return self.placelist();
             // the initial placelist is displayed   
  
         } else {
-            //console.log("2");
-            //console.log (filter);
-            return ko.utils.arrayFilter(self.placelist(), function(prod) {
-                // console.log(prod.name());
-                return prod.name() == filter;
+
+            return ko.utils.arrayFilter(self.placelist(), function(prod) {;
+                var current_name = prod.name().toLowerCase();
+                return current_name.slice(0,filter.length) == filter;
                 // only the list of exact matches is displayed
             });
         }
