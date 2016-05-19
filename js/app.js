@@ -27,19 +27,24 @@ var initMap = function initMap() {
     // loop over locations and add marker for each
     for (i = 0; i < locations.length; i++) {
         location = locations[i];
-        marker = new google.maps.Marker({
+        location.marker = new google.maps.Marker({
             position: location.position,
             map:map,
-            title: location.name
+            title: location.name 
         });
+
+
     }
+    //console.log(locations);
 };
+
 // ko from here on 
 
 // Class of places
 var Place = function(data) {
     this.name = ko.observable(data.name);
     this.position = ko.observable(data.position);
+    this.marker = ko.observable(data.marker);
 };
 
 var ViewModel = function() {
@@ -55,6 +60,7 @@ var ViewModel = function() {
     locations.forEach(function(place){
         self.placelist.push(new Place(place));
     });
+    // console.log(self.placelist());
 
     // console.log(this.showlist);
     // computed to look for user input and perform search
@@ -63,13 +69,15 @@ var ViewModel = function() {
         var filter = self.query().toLowerCase();
         // no search query
         if (!filter) {
-;
             return self.placelist();
-            // the initial placelist is displayed   
+            // the initial placelist is displayed  
  
         } else {
 
-            return ko.utils.arrayFilter(self.placelist(), function(prod) {;
+        	console.log(self.placelist()[0].marker());
+        	console.log(self.placelist()[0].name());
+
+            return ko.utils.arrayFilter(self.placelist(), function(prod) {
                 var current_name = prod.name().toLowerCase();
                 return current_name.slice(0,filter.length) == filter;
                 // only the list of exact matches is displayed
