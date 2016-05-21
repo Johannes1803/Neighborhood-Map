@@ -15,7 +15,7 @@ var locations = [
     ];
 
 // initialize the map with markers of my locations on it
-var map;
+var map, marker, chosen_marker;
 
 var initMap = function initMap() {
     var mapDiv = document.getElementById('map');
@@ -27,6 +27,14 @@ var initMap = function initMap() {
     });
 
 
+    /*markerx = new google.maps.Marker({
+      map: map,
+      draggable: true,
+      animation: google.maps.Animation.DROP,
+      position: {lat: 49.88327, lng: 10.8867}
+    });
+    markerx.addListener('click', toggleBounce);*/
+
 	locations.forEach(function(location) {
     	location.marker = new google.maps.Marker({
     		position: location.position,
@@ -34,7 +42,26 @@ var initMap = function initMap() {
     		title: location.name,
 
     	});
+        chosen_marker = location.marker
+        chosen_marker.addListener('click', (function(markercopy) {
+            return function(){
+                if (markercopy.getAnimation() !== null) {
+                    markercopy.setAnimation(null);
+                } else {
+                    markercopy.setAnimation(google.maps.Animation.BOUNCE);
+                };
+            }
+        })(chosen_marker));
     });
+    //console.log(chosen_marker);
+
+    function toggleBounce() {
+      if (chosen_marker.getAnimation() !== null) {
+        chosen_marker.setAnimation(null);
+      } else {
+        chosen_marker.setAnimation(google.maps.Animation.BOUNCE);
+      }
+    };
     //console.log(vm.placelist()[1].marker);
 	ko.applyBindings(new ViewModel());
 };
