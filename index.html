@@ -21,10 +21,11 @@
     </div>
     <div id="list"> <h3>Places</h3>
         <ul data-bind=" foreach: showlist">
-            <li data-bind="text: name"></li>
+            <li data-bind="text: name, click: $parent.call_wiki_api"></li>
         </ul>
     </div>
     <div id="map"></div>
+    <div id ="place_info"></div>
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAVpbWi3hTnh_EPdkYE1GLbOYVIiYeWdWY&signed_in=true&callback=initMap"
          async defer></script>

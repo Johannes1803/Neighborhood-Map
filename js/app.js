@@ -1,15 +1,15 @@
 // array of locations
 var locations = [
     {
-        name:"Markusstrasse",
+        name:"Künstlerhaus Villa Concordia",
         position: {lat: 49.88521, lng: 10.89405}
     },
     {
-        name:"Markusplatz",
+        name:"E.T.A. Hoffmann Theater",
         position: {lat: 49.89565, lng: 10.88444}
     },
     {
-        name:"Sandstrasse",
+        name:"Schlenkerla",
         position: {lat: 49.89168, lng:  10.88491}
     }
     ];
@@ -19,11 +19,11 @@ var map;
 
 var initMap = function initMap() {
     var mapDiv = document.getElementById('map');
-    var myLatLng = {lat: 49.89565, lng: 10.88454};
+    var myLatLng = {lat: 49.89260, lng: 10.88454};
 
     map = new google.maps.Map(mapDiv,{
         center: myLatLng,
-        zoom: 16
+        zoom: 14
     });
 
 
@@ -34,18 +34,8 @@ var initMap = function initMap() {
     		title: location.name,
 
     	});
-    })
+    });
     //console.log(vm.placelist()[1].marker);
-	/*var location, i, marker;
-    	// loop over locations and add marker for each
-    	for (i = 0; i < locations.length; i++) {
-        	location = locations[i];
-        	location.marker = new google.maps.Marker({
-            	position: location.position,
-            	map:map,
-            	title: location.name 
-        });
-    }*/
 	ko.applyBindings(new ViewModel());
 };
 // ko from here on 
@@ -87,6 +77,31 @@ var ViewModel = function() {
             //the list of matches of substrings is displayed
         });
     });
+
+    this.call_wiki_api = function(list_place){
+    	var place_clicked = list_place.name()
+    	//console.log(place_clicked);
+    	var wiki_url = "https://de.wikipedia.org/w/api.php?action=opensearch&search=" + place_clicked + "&format=json&callback=wikiCallback";
+		$.ajax({
+		url: wiki_url,
+		dataType: "jsonp",
+		success: function(response){
+			console.log(response);
+		    var articlelist = response[1];
+		    var description_list = response[2];
+		    //console.log(articlelist);
+		    var articleStr = articlelist[0];
+		    var articledescription = description_list[0]
+		    var url = "http://de.wikipedia.org/wiki/"+ articleStr + " Bamberg"; 
+
+		    $("#place_info").append('<li><a href="' + url + '">' +
+		        articleStr + '</a><br>' + articledescription +'</li>');
+		    }        
+		});
+
+    };
 };
+
+var cityStr = "Bamberg";
 
 
