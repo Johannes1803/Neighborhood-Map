@@ -15,31 +15,8 @@ var locations = [
     ];
 
 // initialize the map with markers of my locations on it
-var map, marker, chosen_marker, call_wiki_api;
+var map, marker, chosen_marker;
 
-call_wiki_api = function(list_place){
-	var place_clicked = list_place.name;
-	google.maps.event.trigger(list_place.marker,'click');
-	//console.log(place_clicked);
-	var wiki_url = "https://de.wikipedia.org/w/api.php?action=opensearch&search=" + list_place + "&format=json&callback=wikiCallback";
-	$.ajax({
-	url: wiki_url,
-	dataType: "jsonp",
-	success: function(response){
-		console.log(response);
-	    var articlelist = response[1];
-	    var description_list = response[2];
-	    //console.log(articlelist);
-	    var articleStr = articlelist[0];
-	    var articledescription = description_list[0]
-	    var url = "http://de.wikipedia.org/wiki/"+ articleStr + " Bamberg"; 
-
-	    $("#place_info").append('<li><a href="' + url + '">' +
-	        articleStr + '</a><br>' + articledescription +'</li>');
-	    }        
-	});
-
-};
 
 var initMap = function initMap() {
     var mapDiv = document.getElementById('map');
