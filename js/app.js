@@ -81,9 +81,12 @@ var initMap = function initMap() {
             }
         })(chosen_marker));
 
-        chosen_marker.addListener('click', (function(title){
-        	call_wiki_api(title);
-        }(title)));
+        chosen_marker.addListener('click', (function(title) {
+        	return function(){
+        		call_wiki_api(title);
+
+        	};
+        })(title));
 
     });
     //console.log(chosen_marker);
