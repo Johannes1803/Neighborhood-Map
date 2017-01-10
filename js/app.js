@@ -15,7 +15,31 @@ var locations = [
     ];
 
 // initialize the map with markers of my locations on it
-var map, marker, chosen_marker;
+var map, marker, chosen_marker, call_wiki_api;
+
+call_wiki_api = function(list_place){
+	var place_clicked = list_place.name;
+	google.maps.event.trigger(list_place.marker,'click');
+	//console.log(place_clicked);
+	var wiki_url = "https://de.wikipedia.org/w/api.php?action=opensearch&search=" + list_place + "&format=json&callback=wikiCallback";
+	$.ajax({
+	url: wiki_url,
+	dataType: "jsonp",
+	success: function(response){
+		console.log(response);
+	    var articlelist = response[1];
+	    var description_list = response[2];
+	    //console.log(articlelist);
+	    var articleStr = articlelist[0];
+	    var articledescription = description_list[0]
+	    var url = "http://de.wikipedia.org/wiki/"+ articleStr + " Bamberg"; 
+
+	    $("#place_info").append('<li><a href="' + url + '">' +
+	        articleStr + '</a><br>' + articledescription +'</li>');
+	    }        
+	});
+
+};
 
 var initMap = function initMap() {
     var mapDiv = document.getElementById('map');
@@ -42,7 +66,7 @@ var initMap = function initMap() {
     		title: location.name,
 
     	});
-        chosen_marker = location.marker
+        chosen_marker = location.marker;
         chosen_marker.addListener('click', (function(markercopy) {
             return function(){
                 if (markercopy.getAnimation() !== null) {
@@ -54,23 +78,15 @@ var initMap = function initMap() {
         })(chosen_marker));
     });
     //console.log(chosen_marker);
-
-    function toggleBounce() {
-      if (chosen_marker.getAnimation() !== null) {
-        chosen_marker.setAnimation(null);
-      } else {
-        chosen_marker.setAnimation(google.maps.Animation.BOUNCE);
-      }
-    };
-    //console.log(vm.placelist()[1].marker);
+    
 	ko.applyBindings(new ViewModel());
 };
 // ko from here on 
 
 // Class of places
 var Place = function(data) {
-    this.name = ko.observable(data.name);
-    this.position = ko.observable(data.position);
+    this.name = data.name;
+    this.position = data.position;
     // remove the assignment in line 47 HEIDI!!!
     this.marker = data.marker;
 };
@@ -95,7 +111,7 @@ var ViewModel = function() {
         var filter = self.query().toLowerCase();
         // arrayFilter returns places whose names match the search query
         return ko.utils.arrayFilter(self.placelist(), function(prod) {
-            var current_name = prod.name().toLowerCase();
+            var current_name = prod.name.toLowerCase();
             // store the result of comparison in visible
             var visible = current_name.indexOf(filter)!== -1;
             // update visibility of marker
@@ -106,7 +122,9 @@ var ViewModel = function() {
     });
 
     this.call_wiki_api = function(list_place){
-    	var place_clicked = list_place.name()
+    	console.log(list_place);
+    	var place_clicked = list_place.name;
+    	google.maps.event.trigger(list_place.marker,'click');
     	//console.log(place_clicked);
     	var wiki_url = "https://de.wikipedia.org/w/api.php?action=opensearch&search=" + place_clicked + "&format=json&callback=wikiCallback";
 		$.ajax({
