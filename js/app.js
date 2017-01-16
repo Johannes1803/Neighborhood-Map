@@ -23,11 +23,16 @@ var map, marker, chosen_marker, call_wiki_api, articledescription;
 		//google.maps.event.trigger(list_place.marker,'click');
 		//console.log(place_clicked);
 		var wiki_url = "https://de.wikipedia.org/w/api.php?action=opensearch&search=" + place_clicked + "&format=json&callback=wikiCallback";
-		$.ajax({
+		
+        var wikiRequestTimeout = setTimeout(function(){
+            articledescription = "Error: Wiki cant be reached!"
+            }, 8000);
+
+        $.ajax({
 		url: wiki_url,
 		dataType: "jsonp",
-		success: function(response){
-			console.log(response);
+		}).done(function(response){
+			//console.log(response);
 		    var articlelist = response[1];
 		    var description_list = response[2];
 		    //console.log(articlelist);
@@ -36,9 +41,8 @@ var map, marker, chosen_marker, call_wiki_api, articledescription;
             console.log(articledescription);
 		    var url = "http://de.wikipedia.org/wiki/"+ articleStr + " Bamberg";
 
-		    }        
-		});
-        console.log(articledescription);
+            clearTimeout(wikiRequestTimeout);
+        });
         return articledescription;
 
 
@@ -77,20 +81,22 @@ var initMap = function initMap() {
         chosen_marker = location.marker;
         var title = chosen_marker.title;
         //console.log(chosen_marker);
-        chosen_marker.addListener('click', (function(markercopy) {
+        google.maps.event.addListener(chosen_marker,'click', (function(markercopy) {
             return function(){
-                if (markercopy.getAnimation() !== null) {
-                    markercopy.setAnimation(null);
-                } else {
+                if (markercopy.getAnimation() == null) {
                     markercopy.setAnimation(google.maps.Animation.BOUNCE);
+                } else {
+                    markercopy.setAnimation(null);
                 };
             }
         })(chosen_marker));
 
-        chosen_marker.addListener('click', (function(chosen_marker) {
+        
+
+        google.maps.event.addListener(chosen_marker, 'click', (function(chosen_marker) {
         	return function(){
         		var wiki_response = call_wiki_api(chosen_marker);
-                //console.log(wiki_response);
+                console.log(wiki_response);
                 infowindow.setContent(wiki_response);
                 //console.log(infowindow.content);
                 infowindow.open(map, chosen_marker);
