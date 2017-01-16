@@ -15,14 +15,14 @@ var locations = [
     ];
 
 // initialize the map with markers of my locations on it
-var map, marker, chosen_marker, call_wiki_api;
+var map, marker, chosen_marker, call_wiki_api, articledescription;
 
-	call_wiki_api = function(list_place){
-		console.log(list_place);
-		var place_clicked = list_place;
+	call_wiki_api = function(chosen_marker){
+		//console.log(list_place);
+		var place_clicked = chosen_marker.title;
 		//google.maps.event.trigger(list_place.marker,'click');
 		//console.log(place_clicked);
-		var wiki_url = "https://de.wikipedia.org/w/api.php?action=opensearch&search=" + list_place + "&format=json&callback=wikiCallback";
+		var wiki_url = "https://de.wikipedia.org/w/api.php?action=opensearch&search=" + place_clicked + "&format=json&callback=wikiCallback";
 		$.ajax({
 		url: wiki_url,
 		dataType: "jsonp",
@@ -32,13 +32,15 @@ var map, marker, chosen_marker, call_wiki_api;
 		    var description_list = response[2];
 		    //console.log(articlelist);
 		    var articleStr = articlelist[0];
-		    var articledescription = description_list[0]
-		    var url = "http://de.wikipedia.org/wiki/"+ articleStr + " Bamberg"; 
+		    articledescription = description_list[0]
+            console.log(articledescription);
+		    var url = "http://de.wikipedia.org/wiki/"+ articleStr + " Bamberg";
 
-		    $("#place_info").append('<li><a href="' + url + '">' +
-		        articleStr + '</a><br>' + articledescription +'</li>');
 		    }        
 		});
+        console.log(articledescription);
+        return articledescription;
+
 
 	};
 
@@ -50,6 +52,10 @@ var initMap = function initMap() {
     map = new google.maps.Map(mapDiv,{
         center: myLatLng,
         zoom: 14
+    });
+    // Initialize InfoWIndow. There is only one
+    var infowindow = new google.maps.InfoWindow({
+        content: ""
     });
 
 
@@ -70,7 +76,7 @@ var initMap = function initMap() {
     	});
         chosen_marker = location.marker;
         var title = chosen_marker.title;
-        console.log(chosen_marker);
+        //console.log(chosen_marker);
         chosen_marker.addListener('click', (function(markercopy) {
             return function(){
                 if (markercopy.getAnimation() !== null) {
@@ -81,12 +87,17 @@ var initMap = function initMap() {
             }
         })(chosen_marker));
 
-        chosen_marker.addListener('click', (function(title) {
+        chosen_marker.addListener('click', (function(chosen_marker) {
         	return function(){
-        		call_wiki_api(title);
+        		var wiki_response = call_wiki_api(chosen_marker);
+                //console.log(wiki_response);
+                infowindow.setContent(wiki_response);
+                //console.log(infowindow.content);
+                infowindow.open(map, chosen_marker);
+                //infowindow.open(map, chosen_marker);
 
         	};
-        })(title));
+        })(chosen_marker));
 
     });
     //console.log(chosen_marker);
@@ -132,7 +143,7 @@ var ViewModel = function() {
             //the list of matches of substrings is displayed
         });
     });
-
+    // Clicking a list element simulates a click on the corresponding marker
     this.simulate_marker_clicked = function(list_place){
     	google.maps.event.trigger(list_place.marker, 'click');
     }
