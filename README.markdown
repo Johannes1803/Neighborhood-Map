@@ -14,5 +14,5 @@
 
 ## 3rd party Data:
 The following APIs are used to provide this user experience:
--Google Maps API
+- Google Maps API
 - Wikipedia API
