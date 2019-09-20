@@ -7,7 +7,7 @@
 - Receive info from Wikipedia about the place
 
 ## How to use it:
-1. Download the repo
+1. Download/ fork the repository.
 2. Open `index.html` and go to`line 53`. Inside the script tag with maps api as source replace `key=XXX` with your API key.
 3. Open index.html in a browser. Enjoy :)
 
